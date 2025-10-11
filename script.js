@@ -1,7 +1,18 @@
-// Configuration
-let GOOGLE_SCRIPT_URL = localStorage.getItem('googleScriptUrl') || '';
+// =============================================
+// CONFIGURATION - EDIT THIS SECTION
+// =============================================
+
+// Replace this with your Google Apps Script URL
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoAGzg9-QfiCraXustLKgehsChZDMGrQDzY_caWLD4lqPn1K9mZahrHlAu8kBPx8zY/exec';
+
+// =============================================
+// END OF CONFIGURATION
+// =============================================
+
+// Application State
 let USER_NAME = localStorage.getItem('userName') || '';
 let CURRENT_FOLDER = localStorage.getItem('currentFolder') || 'general';
+let DARK_MODE = localStorage.getItem('darkMode') === 'true';
 let codeEditor = null;
 
 let selectedFiles = [];
@@ -11,16 +22,23 @@ let folders = JSON.parse(localStorage.getItem('folders')) || [{ id: 'general', n
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+});
+
+function initializeApp() {
     initializeDragAndDrop();
     setupFileInput();
     initializeCodeEditor();
+    initializeDarkMode();
     checkUserSetup();
     loadFolders();
     updateFolderSelects();
     
-    if (GOOGLE_SCRIPT_URL) {
+    // Load files if script URL is configured
+    if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID_HERE')) {
         loadSubmissions();
-        hideSetupGuide();
+    } else {
+        showError('Please configure the Google Apps Script URL in the script.js file');
     }
     
     // Add event listeners for filter
@@ -29,7 +47,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update editor title when filename changes
     document.getElementById('editorFileName').addEventListener('input', updateEditorTitle);
-});
+}
+
+function initializeDarkMode() {
+    const themeToggle = document.getElementById('themeToggle');
+    
+    if (DARK_MODE) {
+        document.body.classList.add('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        // Update CodeMirror theme if editor exists
+        if (codeEditor) {
+            codeEditor.setOption('theme', 'material-darker');
+        }
+    } else {
+        document.body.classList.remove('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        // Update CodeMirror theme if editor exists
+        if (codeEditor) {
+            codeEditor.setOption('theme', 'default');
+        }
+    }
+}
+
+function toggleDarkMode() {
+    DARK_MODE = !DARK_MODE;
+    localStorage.setItem('darkMode', DARK_MODE);
+    initializeDarkMode();
+    showSuccess(DARK_MODE ? 'Dark mode activated 🌙' : 'Light mode activated ☀️');
+}
 
 function checkUserSetup() {
     // Show welcome modal if no user name is set
@@ -37,11 +82,6 @@ function checkUserSetup() {
         document.getElementById('welcomeModal').style.display = 'block';
     } else {
         document.getElementById('userName').textContent = USER_NAME;
-    }
-    
-    // Show setup guide if no script URL is set
-    if (!GOOGLE_SCRIPT_URL) {
-        document.getElementById('setupGuide').style.display = 'block';
     }
 }
 
@@ -61,7 +101,7 @@ function saveUserName() {
 function initializeCodeEditor() {
     codeEditor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
         mode: 'javascript',
-        theme: 'material-darker',
+        theme: DARK_MODE ? 'material-darker' : 'default',
         lineNumbers: true,
         matchBrackets: true,
         indentUnit: 4,
@@ -130,31 +170,6 @@ function switchTab(tabName) {
     // Refresh editor if switching to editor tab
     if (tabName === 'code-editor') {
         setTimeout(() => codeEditor.refresh(), 100);
-    }
-}
-
-function checkSetup() {
-    const scriptUrlInput = document.getElementById('scriptUrlInput');
-    if (GOOGLE_SCRIPT_URL) {
-        scriptUrlInput.value = GOOGLE_SCRIPT_URL;
-        hideSetupGuide();
-    }
-}
-
-function hideSetupGuide() {
-    document.getElementById('setupGuide').style.display = 'none';
-}
-
-function saveScriptUrl() {
-    const url = document.getElementById('scriptUrlInput').value.trim();
-    if (url && url.includes('google.com')) {
-        GOOGLE_SCRIPT_URL = url;
-        localStorage.setItem('googleScriptUrl', url);
-        hideSetupGuide();
-        showSuccess('Configuration saved successfully! Loading your files...');
-        loadSubmissions();
-    } else {
-        showError('Please enter a valid Google Apps Script URL');
     }
 }
 
@@ -274,9 +289,8 @@ function setupFileInput() {
 }
 
 function handleFiles(files) {
-    if (!GOOGLE_SCRIPT_URL) {
-        showError('Please configure the Google Apps Script URL first');
-        document.getElementById('setupGuide').style.display = 'block';
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID_HERE')) {
+        showError('Please configure the Google Apps Script URL in the script.js file');
         return;
     }
     
@@ -295,7 +309,7 @@ function updateUploadUI() {
             </div>
             <h3>${selectedFiles.length} File(s) Selected</h3>
             ${selectedFiles.map(file => `
-                <div style="text-align: left; margin: 8px 0; padding: 10px; background: white; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="text-align: left; margin: 8px 0; padding: 10px; background: var(--light); border-radius: 8px; border: 1px solid var(--border);">
                     <i class="fas fa-file-code"></i> ${file.name} 
                     <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; margin-left: 10px;">
                         ${(file.size / 1024).toFixed(1)} KB
@@ -349,8 +363,8 @@ function createFileFromEditor() {
 }
 
 async function uploadVirtualFile(file, content, description, folder) {
-    if (!GOOGLE_SCRIPT_URL) {
-        showError('Please configure the Google Apps Script URL first');
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID_HERE')) {
+        showError('Please configure the Google Apps Script URL in the script.js file');
         return;
     }
 
@@ -446,8 +460,8 @@ function loadTemplate() {
 }
 
 async function submitFiles() {
-    if (!GOOGLE_SCRIPT_URL) {
-        showError('Please configure the Google Apps Script URL first');
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID_HERE')) {
+        showError('Please configure the Google Apps Script URL in the script.js file');
         return;
     }
 
@@ -537,7 +551,7 @@ async function uploadFileToSheets(file, description, folder) {
 }
 
 async function loadSubmissions() {
-    if (!GOOGLE_SCRIPT_URL) return;
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID_HERE')) return;
 
     try {
         const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=GET_SUBMISSIONS&timestamp=${new Date().getTime()}`);
@@ -819,17 +833,7 @@ async function exportAllFiles() {
 }
 
 function showUploadHelp() {
-    alert(`📁 CodeHub Pro Features:\n\n• File Upload: Drag & drop or browse files\n• Code Editor: Write code directly with syntax highlighting\n• Templates: Pre-built templates for different languages\n• Folder System: Organize files in different folders\n• User Tracking: See who uploaded each file\n• File Management: View, download, copy, delete files\n• Search & Filter: Find files by name, content, or description\n• Cloud Storage: Secure Google Sheets backend\n\n💡 Tip: Use Ctrl+S to save files from the editor!`);
-}
-
-function clearLocalData() {
-    if (confirm('Clear all local settings and reset the application?')) {
-        localStorage.removeItem('googleScriptUrl');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('currentFolder');
-        localStorage.removeItem('folders');
-        location.reload();
-    }
+    alert(`📁 CodeHub Pro Features:\n\n• File Upload: Drag & drop or browse files\n• Code Editor: Write code directly with syntax highlighting\n• Templates: Pre-built templates for different languages\n• Folder System: Organize files in different folders\n• User Tracking: See who uploaded each file\n• Dark Mode: Toggle between light and dark themes\n• File Management: View, download, copy, delete files\n• Search & Filter: Find files by name, content, or description\n• Cloud Storage: Secure Google Sheets backend\n\n💡 Tip: Use Ctrl+S to save files from the editor!`);
 }
 
 function showSuccess(message) {

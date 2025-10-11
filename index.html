@@ -22,6 +22,25 @@
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            
+            /* Dark mode variables */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        .dark-mode {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --border: #334155;
+            --light: #1e293b;
+            --dark: #f8fafc;
+            --gradient: linear-gradient(135deg, #1e3a8a 0%, #7e22ce 100%);
         }
 
         * {
@@ -35,6 +54,8 @@
             background: var(--gradient);
             min-height: 100vh;
             padding: 20px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
 
         .container {
@@ -43,7 +64,7 @@
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             padding: 30px;
             border-radius: 20px;
@@ -55,10 +76,34 @@
             position: relative;
         }
 
-        .user-info {
+        .theme-toggle {
             position: absolute;
             top: 20px;
             right: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            left: 30px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -66,11 +111,12 @@
             padding: 8px 15px;
             border-radius: 25px;
             font-size: 0.9rem;
-            color: var(--dark);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
         }
 
         .header h1 {
-            color: var(--dark);
+            color: var(--text-primary);
             font-size: 2.5rem;
             margin-bottom: 10px;
             display: flex;
@@ -80,29 +126,30 @@
         }
 
         .header p {
-            color: var(--secondary);
+            color: var(--text-secondary);
             font-size: 1.1rem;
         }
 
         .main-content {
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 400px 1fr;
             gap: 30px;
         }
 
         .content-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
             box-shadow: var(--shadow-lg);
             border: 1px solid var(--border);
             animation: fadeInUp 0.6s ease-out;
+            color: var(--text-primary);
         }
 
         .card-title {
             font-size: 1.5rem;
-            color: var(--dark);
+            color: var(--text-primary);
             margin-bottom: 20px;
             display: flex;
             align-items: center;
@@ -123,7 +170,7 @@
         }
 
         .welcome-content {
-            background: white;
+            background: var(--card-bg);
             margin: 10% auto;
             padding: 40px;
             border-radius: 20px;
@@ -131,6 +178,8 @@
             max-width: 500px;
             text-align: center;
             animation: modalSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
         }
 
         .welcome-icon {
@@ -169,6 +218,7 @@
             align-items: center;
             gap: 8px;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .folder-item.active {
@@ -210,7 +260,7 @@
             border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
-            color: var(--secondary);
+            color: var(--text-secondary);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
@@ -249,18 +299,29 @@
             background: var(--light);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            color: var(--text-primary);
         }
 
         .upload-area:hover {
             border-color: var(--primary);
-            background: #f0f7ff;
+            background: var(--primary);
+            color: white;
             transform: translateY(-2px);
+        }
+
+        .upload-area:hover .upload-icon {
+            color: white;
         }
 
         .upload-area.dragover {
             border-color: var(--primary);
-            background: #e0f2fe;
+            background: var(--primary);
+            color: white;
             transform: scale(1.02);
+        }
+
+        .upload-area.dragover .upload-icon {
+            color: white;
         }
 
         .upload-icon {
@@ -315,7 +376,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--dark);
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -329,6 +390,8 @@
             font-size: 14px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
+            background: var(--light);
+            color: var(--text-primary);
         }
 
         .form-input:focus, .form-textarea:focus, .form-select:focus {
@@ -496,7 +559,7 @@
 
         .file-name {
             font-weight: 600;
-            color: var(--dark);
+            color: var(--text-primary);
             font-size: 1.1rem;
             display: flex;
             align-items: center;
@@ -515,7 +578,7 @@
         .file-meta {
             display: flex;
             gap: 15px;
-            color: var(--secondary);
+            color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 10px;
             flex-wrap: wrap;
@@ -528,7 +591,7 @@
         }
 
         .file-description {
-            color: var(--secondary);
+            color: var(--text-secondary);
             margin: 10px 0;
             line-height: 1.5;
         }
@@ -555,6 +618,8 @@
             flex: 1;
             min-width: 200px;
             transition: all 0.3s ease;
+            background: var(--light);
+            color: var(--text-primary);
         }
 
         .search-box:focus, .filter-select:focus {
@@ -612,10 +677,22 @@
             border: 1px solid #a7f3d0;
         }
 
+        .dark-mode .alert-success {
+            background: #064e3b;
+            color: #a7f3d0;
+            border-color: #065f46;
+        }
+
         .alert-error {
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #fecaca;
+        }
+
+        .dark-mode .alert-error {
+            background: #7f1d1d;
+            color: #fecaca;
+            border-color: #991b1b;
         }
 
         /* Modal */
@@ -633,7 +710,7 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--card-bg);
             margin: 5% auto;
             padding: 30px;
             border-radius: 20px;
@@ -643,6 +720,8 @@
             overflow-y: auto;
             position: relative;
             animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
         }
 
         .close {
@@ -651,12 +730,12 @@
             top: 20px;
             font-size: 28px;
             cursor: pointer;
-            color: var(--secondary);
+            color: var(--text-secondary);
             transition: all 0.3s ease;
         }
 
         .close:hover {
-            color: var(--dark);
+            color: var(--text-primary);
             transform: rotate(90deg) scale(1.1);
         }
 
@@ -671,32 +750,6 @@
             max-height: 400px;
             overflow-y: auto;
             white-space: pre-wrap;
-        }
-
-        /* Setup Guide */
-        .setup-guide {
-            background: linear-gradient(135deg, #fffbeb, #fed7aa);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            border: 1px solid #fdba74;
-            animation: pulse 2s infinite;
-        }
-
-        .setup-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 14px;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-        }
-
-        .setup-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         /* Animations */
@@ -780,7 +833,7 @@
         .empty-state {
             text-align: center;
             padding: 50px 20px;
-            color: var(--secondary);
+            color: var(--text-secondary);
             animation: fadeIn 1s ease-out;
         }
 
@@ -804,6 +857,11 @@
                 position: static;
                 justify-content: center;
                 margin-top: 15px;
+            }
+            
+            .theme-toggle {
+                position: static;
+                margin: 15px auto;
             }
         }
 
@@ -831,7 +889,7 @@
                 <i class="fas fa-code"></i>
             </div>
             <h2>Welcome to CodeHub! 👋</h2>
-            <p style="margin: 20px 0; color: var(--secondary);">Please tell us your name to get started:</p>
+            <p style="margin: 20px 0; color: var(--text-secondary);">Please tell us your name to get started:</p>
             <input type="text" id="userNameInput" class="form-input" placeholder="Enter your name" style="margin-bottom: 20px;">
             <button class="btn btn-primary" onclick="saveUserName()" style="width: 100%;">
                 <i class="fas fa-rocket"></i> Start Coding!
@@ -842,6 +900,9 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
+                <i class="fas fa-moon"></i>
+            </button>
             <h1><i class="fas fa-code"></i> CodeHub Pro</h1>
             <p>Advanced Code Management with Built-in Editor & Cloud Storage</p>
             <div class="user-info" id="userInfo">
@@ -851,18 +912,40 @@
         </div>
 
         <div class="main-content">
-            <!-- Left Column -->
+            <!-- Left Column - Statistics & Actions -->
             <div class="left-column">
-                <!-- Setup Guide -->
-                <div class="setup-guide" id="setupGuide">
-                    <h3><i class="fas fa-cog"></i> Initial Setup Required</h3>
-                    <!-- <p>To get started, please configure your Google Apps Script URL:</p> -->
-                    <input type="text" class="setup-input" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
-                    <button class="btn btn-primary" onclick="saveScriptUrl()">
-                        <i class="fas fa-save"></i> 
-                    </button>
+                <div class="content-card">
+                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Statistics</h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalFiles">0</div>
+                            <div class="stat-label">Total Files</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="fileTypes">0</div>
+                            <div class="stat-label">File Types</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card" style="margin-top: 15px;">
+                        <div class="stat-label">Last Upload</div>
+                        <div class="stat-number" id="lastUpload">-</div>
+                    </div>
                 </div>
 
+                <div class="content-card">
+                    <h3 class="card-title"><i class="fas fa-info-circle"></i> Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-info" onclick="showUploadHelp()">
+                            <i class="fas fa-question-circle"></i> Upload Guide
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Files & Upload -->
+            <div class="right-column">
                 <!-- Folder System -->
                 <div class="content-card folder-system">
                     <div class="folder-header">
@@ -1024,41 +1107,6 @@
                             <h3>No Files Yet</h3>
                             <p>Upload your first code file or create one using the editor!</p>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column - Statistics -->
-            <div class="right-column">
-                <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Statistics</h3>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalFiles">0</div>
-                            <div class="stat-label">Total Files</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="fileTypes">0</div>
-                            <div class="stat-label">File Types</div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card" style="margin-top: 15px;">
-                        <div class="stat-label">Last Upload</div>
-                        <div class="stat-number" id="lastUpload">-</div>
-                    </div>
-                </div>
-
-                <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-info-circle"></i> Quick Actions</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button class="btn btn-info" onclick="showUploadHelp()">
-                            <i class="fas fa-question-circle"></i> Upload Guide
-                        </button>
-                        <button class="btn btn-warning" onclick="clearLocalData()">
-                            <i class="fas fa-broom"></i> Clear Settings
-                        </button>
                     </div>
                 </div>
             </div>
