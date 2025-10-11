@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeHub - Advanced Code Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradient);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            animation: slideDown 0.6s ease-out;
+            position: relative;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--light);
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .header h1 {
+            color: var(--dark);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Welcome Modal */
+        .welcome-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-content {
+            background: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            animation: modalSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* Folder System */
+        .folder-system {
+            margin-bottom: 25px;
+        }
+
+        .folder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .folder-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .folder-item {
+            background: var(--light);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .folder-item.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .folder-item:hover:not(.active) {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .folder-stats {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-left: 8px;
+        }
+
+        /* Tab System */
+        .tab-container {
+            margin-bottom: 25px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: var(--light);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 3px dashed var(--border);
+            border-radius: 15px;
+            padding: 50px 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            background: var(--light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #f0f7ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: #e0f2fe;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        /* Code Editor */
+        .editor-container {
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .editor-header {
+            background: var(--dark);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .CodeMirror {
+            height: 300px !important;
+            font-size: 14px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Buttons with Enhanced Animations */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            background: #0da271;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-info:hover {
+            background: #0891b2;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:disabled:hover::before {
+            left: -100%;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        /* File List */
+        .file-list {
+            margin-top: 25px;
+        }
+
+        .file-item {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .file-item:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-type {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .file-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-description {
+            color: var(--secondary);
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Search & Filter */
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            flex: 1;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .close {
+            position: absolute;
+            right: 25px;
+            top: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--dark);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .code-preview {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Setup Guide */
+        .setup-guide {
+            background: linear-gradient(135deg, #fffbeb, #fed7aa);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #fdba74;
+            animation: pulse 2s infinite;
+        }
+
+        .setup-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .setup-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--secondary);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-info {
+                position: static;
+                justify-content: center;
+                margin-top: 15px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="welcome-modal">
+        <div class="welcome-content">
+            <div class="welcome-icon">
+                <i class="fas fa-code"></i>
+            </div>
+            <h2>Welcome to CodeHub! 👋</h2>
+            <p style="margin: 20px 0; color: var(--secondary);">Please tell us your name to get started:</p>
+            <input type="text" id="userNameInput" class="form-input" placeholder="Enter your name" style="margin-bottom: 20px;">
+            <button class="btn btn-primary" onclick="saveUserName()" style="width: 100%;">
+                <i class="fas fa-rocket"></i> Start Coding!
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-code"></i> CodeHub Pro</h1>
+            <p>Advanced Code Management with Built-in Editor & Cloud Storage</p>
+            <div class="user-info" id="userInfo">
+                <i class="fas fa-user"></i>
+                <span id="userName">Guest</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Setup Guide -->
+                <div class="setup-guide" id="setupGuide">
+                    <h3><i class="fas fa-cog"></i> Initial Setup Required</h3>
+                    <!-- <p>To get started, please configure your Google Apps Script URL:</p> -->
+                    <input type="text" class="setup-input" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
+                    <button class="btn btn-primary" onclick="saveScriptUrl()">
+                        <i class="fas fa-save"></i> 
+                    </button>
+                </div>
+
+                <!-- Folder System -->
+                <div class="content-card folder-system">
+                    <div class="folder-header">
+                        <h3 class="card-title"><i class="fas fa-folder"></i> Folders</h3>
+                        <button class="btn btn-primary" onclick="showCreateFolderModal()">
+                            <i class="fas fa-plus"></i> New Folder
+                        </button>
+                    </div>
+                    <div class="folder-list" id="folderList">
+                        <!-- Folders will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Upload Section with Tabs -->
+                <div class="content-card">
+                    <h3 class="card-title"><i class="fas fa-cloud-upload-alt"></i> Upload Files</h3>
+                    
+                    <div class="tab-container">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" onclick="switchTab('file-upload')">
+                                <i class="fas fa-file-upload"></i> File Upload
+                            </button>
+                            <button class="tab-btn" onclick="switchTab('code-editor')">
+                                <i class="fas fa-edit"></i> Code Editor
+                            </button>
+                        </div>
+
+                        <!-- File Upload Tab -->
+                        <div id="file-upload" class="tab-content active">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-folder"></i> Select Folder
+                                </label>
+                                <select class="form-select" id="uploadFolder">
+                                    <option value="general">General</option>
+                                    <!-- Folders will be dynamically added -->
+                                </select>
+                            </div>
+
+                            <div class="upload-area" id="uploadArea">
+                                <div id="uploadContent">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-file-upload"></i>
+                                    </div>
+                                    <h3>Drag & Drop Your Files Here</h3>
+                                    <p>or click to browse your computer</p>
+                                    <p class="small">Supports all code files: .js, .py, .java, .cpp, .html, .css, etc.</p>
+                                </div>
+                                <input type="file" id="fileInput" multiple style="display: none;">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-comment-dots"></i> File Description
+                                </label>
+                                <textarea class="form-textarea" id="fileDescription" placeholder="Describe what this file does..."></textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-folder-open"></i> Browse Files
+                                </button>
+                                <button class="btn btn-success" id="submitBtn" onclick="submitFiles()" disabled>
+                                    <i class="fas fa-paper-plane"></i> Upload to Cloud
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Code Editor Tab -->
+                        <div id="code-editor" class="tab-content">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-folder"></i> Select Folder
+                                </label>
+                                <select class="form-select" id="editorFolder">
+                                    <option value="general">General</option>
+                                    <!-- Folders will be dynamically added -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-file-signature"></i> File Name
+                                </label>
+                                <input type="text" class="form-input" id="editorFileName" placeholder="example.js, script.py, etc.">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-comment-dots"></i> Description
+                                </label>
+                                <textarea class="form-textarea" id="editorDescription" placeholder="Describe your code..."></textarea>
+                            </div>
+
+                            <div class="editor-container">
+                                <div class="editor-header">
+                                    <div class="editor-title">
+                                        <i class="fas fa-code"></i>
+                                        <span id="editorTitle">Code Editor</span>
+                                    </div>
+                                    <div class="editor-actions">
+                                        <button class="action-btn" style="background: var(--info); color: white;" onclick="clearEditor()">
+                                            <i class="fas fa-broom"></i> Clear
+                                        </button>
+                                        <button class="action-btn" style="background: var(--warning); color: white;" onclick="formatCode()">
+                                            <i class="fas fa-magic"></i> Format
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea id="codeEditor"></textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button class="btn btn-primary" onclick="createFileFromEditor()">
+                                    <i class="fas fa-plus-circle"></i> Create File
+                                </button>
+                                <button class="btn btn-info" onclick="loadTemplate()">
+                                    <i class="fas fa-file-code"></i> Load Template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div id="successMessage" class="alert alert-success"></div>
+                <div id="errorMessage" class="alert alert-error"></div>
+
+                <!-- File List -->
+                <div class="content-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 class="card-title"><i class="fas fa-files"></i> Your Files</h3>
+                        <button class="btn btn-info" onclick="loadSubmissions()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+
+                    <!-- Search & Filter -->
+                    <div class="search-filter">
+                        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search files and descriptions...">
+                        <select class="filter-select" id="fileTypeFilter">
+                            <option value="">All File Types</option>
+                            <option value="js">JavaScript</option>
+                            <option value="py">Python</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="txt">Text</option>
+                        </select>
+                        <button class="btn btn-warning" onclick="exportAllFiles()">
+                            <i class="fas fa-download"></i> Export All
+                        </button>
+                    </div>
+
+                    <div id="submissionsContainer" class="file-list">
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <h3>No Files Yet</h3>
+                            <p>Upload your first code file or create one using the editor!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Statistics -->
+            <div class="right-column">
+                <div class="content-card">
+                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Statistics</h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalFiles">0</div>
+                            <div class="stat-label">Total Files</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="fileTypes">0</div>
+                            <div class="stat-label">File Types</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card" style="margin-top: 15px;">
+                        <div class="stat-label">Last Upload</div>
+                        <div class="stat-number" id="lastUpload">-</div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h3 class="card-title"><i class="fas fa-info-circle"></i> Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-info" onclick="showUploadHelp()">
+                            <i class="fas fa-question-circle"></i> Upload Guide
+                        </button>
+                        <button class="btn btn-warning" onclick="clearLocalData()">
+                            <i class="fas fa-broom"></i> Clear Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle"><i class="fas fa-file-code"></i> File Preview</h3>
+            <div class="file-meta" id="modalMeta"></div>
+            <div class="file-description" id="modalDescription"></div>
+            <pre class="code-preview" id="modalContent"></pre>
+            <div class="file-actions" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="downloadCurrentFile()">
+                    <i class="fas fa-download"></i> Download File
+                </button>
+                <button class="btn btn-primary" onclick="copyToClipboard()">
+                    <i class="fas fa-copy"></i> Copy Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Folder Modal -->
+    <div id="createFolderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateFolderModal()">&times;</span>
+            <h3><i class="fas fa-folder-plus"></i> Create New Folder</h3>
+            <div class="form-group">
+                <label class="form-label">Folder Name</label>
+                <input type="text" class="form-input" id="newFolderName" placeholder="Enter folder name">
+            </div>
+            <button class="btn btn-primary" onclick="createFolder()" style="width: 100%;">
+                <i class="fas fa-plus"></i> Create Folder
+            </button>
+        </div>
+    </div>
+
+    <!-- CodeMirror Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
