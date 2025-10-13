@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeHub - Advanced Code Management</title>
+    <title>CodeHub - Professional Code Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
@@ -59,7 +59,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1800px;
             margin: 0 auto;
         }
 
@@ -188,7 +188,7 @@
             margin-bottom: 20px;
         }
 
-        /* Folder System */
+        /* Enhanced Folder System */
         .folder-system {
             margin-bottom: 25px;
         }
@@ -202,21 +202,21 @@
 
         .folder-list {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
         .folder-item {
             background: var(--light);
-            padding: 12px 20px;
+            padding: 12px 15px;
             border-radius: 12px;
             border: 2px solid var(--border);
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
             font-weight: 600;
             color: var(--text-primary);
         }
@@ -233,10 +233,253 @@
             transform: translateY(-1px);
         }
 
+        .folder-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .folder-stats {
             font-size: 0.8rem;
             opacity: 0.7;
             margin-left: 8px;
+        }
+
+        .folder-privacy {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: var(--secondary);
+            color: white;
+        }
+
+        .folder-privacy.public {
+            background: var(--success);
+        }
+
+        /* Project Management */
+        .project-section {
+            margin-bottom: 25px;
+        }
+
+        .project-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .project-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Enhanced Search & Filter */
+        .enhanced-search {
+            margin-bottom: 25px;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tag-system {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .tag {
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        /* File Item Enhancements */
+        .file-item {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInRight 0.5s ease-out;
+            position: relative;
+        }
+
+        .file-item.starred {
+            border-left: 4px solid var(--warning);
+        }
+
+        .file-item:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-actions-top {
+            display: flex;
+            gap: 5px;
+        }
+
+        .star-btn {
+            background: transparent;
+            border: none;
+            color: var(--warning);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .file-type {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .file-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-description {
+            color: var(--text-secondary);
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Collaboration Features */
+        .collaboration-section {
+            margin-bottom: 25px;
+        }
+
+        .collaborator-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .collaborator {
+            background: var(--light);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Analytics Dashboard */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .analytics-card {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .analytics-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .analytics-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Activity Log */
+        .activity-log {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
         }
 
         /* Tab System */
@@ -250,6 +493,7 @@
             border-radius: 15px;
             padding: 5px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -266,6 +510,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            min-width: 120px;
         }
 
         .tab-btn.active {
@@ -367,7 +612,7 @@
             font-family: 'Fira Code', 'Courier New', monospace;
         }
 
-        /* Form Elements */
+        /* Enhanced Form Elements */
         .form-group {
             margin-bottom: 20px;
         }
@@ -530,78 +775,6 @@
             transform: translateY(-2px) scale(1.05);
         }
 
-        /* File List */
-        .file-list {
-            margin-top: 25px;
-        }
-
-        .file-item {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: slideInRight 0.5s ease-out;
-        }
-
-        .file-item:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .file-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .file-type {
-            background: var(--primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .file-meta {
-            display: flex;
-            gap: 15px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .file-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .file-description {
-            color: var(--text-secondary);
-            margin: 10px 0;
-            line-height: 1.5;
-        }
-
-        .file-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
         /* Search & Filter */
         .search-filter {
             display: flex;
@@ -752,6 +925,39 @@
             white-space: pre-wrap;
         }
 
+        /* File List */
+        .file-list {
+            margin-top: 25px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .file-checkbox {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+
         /* Animations */
         @keyframes slideDown {
             from {
@@ -829,27 +1035,13 @@
             50% { transform: scale(1.02); }
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--text-secondary);
-            animation: fadeIn 1s ease-out;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
             
-            .stats-grid {
+            .stats-grid, .analytics-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -879,6 +1071,16 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Coming Soon Badge */
+        .coming-soon {
+            background: var(--warning);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -904,7 +1106,7 @@
                 <i class="fas fa-moon"></i>
             </button>
             <h1><i class="fas fa-code"></i> CodeHub Pro</h1>
-            <p>Advanced Code Management with Built-in Editor & Cloud Storage</p>
+            <p>Professional Code Management with Real-time Collaboration</p>
             <div class="user-info" id="userInfo">
                 <i class="fas fa-user"></i>
                 <span id="userName">Guest</span>
@@ -912,8 +1114,9 @@
         </div>
 
         <div class="main-content">
-            <!-- Left Column - Statistics & Actions -->
+            <!-- Left Column - Statistics & Management -->
             <div class="left-column">
+                <!-- Statistics -->
                 <div class="content-card">
                     <h3 class="card-title"><i class="fas fa-chart-bar"></i> Statistics</h3>
                     
@@ -934,42 +1137,135 @@
                     </div>
                 </div>
 
+                <!-- Analytics Dashboard -->
                 <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-info-circle"></i> Quick Actions</h3>
+                    <h3 class="card-title"><i class="fas fa-analytics"></i> Analytics</h3>
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <div class="analytics-number" id="totalLines">0</div>
+                            <div class="analytics-label">Lines of Code</div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-number" id="activeProjects">0</div>
+                            <div class="analytics-label">Active Projects</div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-number" id="collaborators">0</div>
+                            <div class="analytics-label">Collaborators</div>
+                        </div>
+                        <div class="analytics-card">
+                            <div class="analytics-number" id="storageUsed">0MB</div>
+                            <div class="analytics-label">Storage Used</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Log -->
+                <div class="content-card">
+                    <h3 class="card-title"><i class="fas fa-history"></i> Recent Activity</h3>
+                    <div class="activity-log" id="activityLog">
+                        <!-- Activity items will be dynamically added -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-card">
+                    <h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <button class="btn btn-info" onclick="showUploadHelp()">
                             <i class="fas fa-question-circle"></i> Upload Guide
+                        </button>
+                        <button class="btn btn-warning" onclick="showBulkActions()">
+                            <i class="fas fa-layer-group"></i> Bulk Operations
+                        </button>
+                        <button class="btn btn-primary" onclick="switchTab('projects-tab')">
+                            <i class="fas fa-rocket"></i> Project Manager
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column - Files & Upload -->
+            <!-- Right Column - Files & Collaboration -->
             <div class="right-column">
+                <!-- Enhanced Search & Filter -->
+                <div class="content-card enhanced-search">
+                    <h3 class="card-title"><i class="fas fa-search"></i> Enhanced Search</h3>
+                    <div class="search-filter">
+                        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search files, projects, tags...">
+                        <select class="filter-select" id="fileTypeFilter">
+                            <option value="">All File Types</option>
+                            <option value="js">JavaScript</option>
+                            <option value="py">Python</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="txt">Text</option>
+                        </select>
+                    </div>
+                    <div class="search-actions">
+                        <button class="btn btn-primary" onclick="filterStarred()">
+                            <i class="fas fa-star"></i> Starred
+                        </button>
+                        <button class="btn btn-info" onclick="filterRecent()">
+                            <i class="fas fa-clock"></i> Recent
+                        </button>
+                        <button class="btn btn-warning" onclick="exportAllFiles()">
+                            <i class="fas fa-download"></i> Export All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bulk Actions Panel -->
+                <div class="bulk-actions" id="bulkActions">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span id="selectedCount">0 files selected</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-danger" onclick="deleteSelectedFiles()">
+                                <i class="fas fa-trash"></i> Delete Selected
+                            </button>
+                            <button class="btn btn-primary" onclick="clearSelection()">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Folder System -->
                 <div class="content-card folder-system">
                     <div class="folder-header">
-                        <h3 class="card-title"><i class="fas fa-folder"></i> Folders</h3>
-                        <button class="btn btn-primary" onclick="showCreateFolderModal()">
-                            <i class="fas fa-plus"></i> New Folder
-                        </button>
+                        <h3 class="card-title"><i class="fas fa-folder"></i> Folders & Projects</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" onclick="showCreateFolderModal()">
+                                <i class="fas fa-plus"></i> New Folder
+                            </button>
+                            <button class="btn btn-success" onclick="showCreateProjectModal()">
+                                <i class="fas fa-rocket"></i> New Project
+                            </button>
+                        </div>
                     </div>
                     <div class="folder-list" id="folderList">
                         <!-- Folders will be dynamically added here -->
                     </div>
                 </div>
 
-                <!-- Upload Section with Tabs -->
+                <!-- Upload Section with Enhanced Tabs -->
                 <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-cloud-upload-alt"></i> Upload Files</h3>
+                    <h3 class="card-title"><i class="fas fa-cloud-upload-alt"></i> File Management</h3>
                     
                     <div class="tab-container">
                         <div class="tab-buttons">
                             <button class="tab-btn active" onclick="switchTab('file-upload')">
-                                <i class="fas fa-file-upload"></i> File Upload
+                                <i class="fas fa-file-upload"></i> Upload
                             </button>
                             <button class="tab-btn" onclick="switchTab('code-editor')">
                                 <i class="fas fa-edit"></i> Code Editor
+                            </button>
+                            <button class="tab-btn" onclick="switchTab('projects-tab')">
+                                <i class="fas fa-rocket"></i> Projects
+                            </button>
+                            <button class="tab-btn" onclick="switchTab('collaboration-tab')">
+                                <i class="fas fa-users"></i> Collaboration
                             </button>
                         </div>
 
@@ -977,7 +1273,7 @@
                         <div id="file-upload" class="tab-content active">
                             <div class="form-group">
                                 <label class="form-label">
-                                    <i class="fas fa-folder"></i> Select Folder
+                                    <i class="fas fa-folder"></i> Select Folder/Project
                                 </label>
                                 <select class="form-select" id="uploadFolder">
                                     <option value="general">General</option>
@@ -1004,6 +1300,26 @@
                                 <textarea class="form-textarea" id="fileDescription" placeholder="Describe what this file does..."></textarea>
                             </div>
 
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tags"></i> Tags (comma separated)
+                                </label>
+                                <input type="text" class="form-input" id="fileTags" placeholder="javascript, frontend, utility">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-clock"></i> Auto-delete after
+                                </label>
+                                <select class="form-select" id="fileExpiration">
+                                    <option value="never">Never</option>
+                                    <option value="1day">1 Day</option>
+                                    <option value="1week">1 Week</option>
+                                    <option value="1month">1 Month</option>
+                                    <option value="3months">3 Months</option>
+                                </select>
+                            </div>
+
                             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                                 <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
                                     <i class="fas fa-folder-open"></i> Browse Files
@@ -1018,7 +1334,7 @@
                         <div id="code-editor" class="tab-content">
                             <div class="form-group">
                                 <label class="form-label">
-                                    <i class="fas fa-folder"></i> Select Folder
+                                    <i class="fas fa-folder"></i> Select Folder/Project
                                 </label>
                                 <select class="form-select" id="editorFolder">
                                     <option value="general">General</option>
@@ -1040,6 +1356,13 @@
                                 <textarea class="form-textarea" id="editorDescription" placeholder="Describe your code..."></textarea>
                             </div>
 
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tags"></i> Tags (comma separated)
+                                </label>
+                                <input type="text" class="form-input" id="editorTags" placeholder="javascript, frontend, utility">
+                            </div>
+
                             <div class="editor-container">
                                 <div class="editor-header">
                                     <div class="editor-title">
@@ -1053,6 +1376,9 @@
                                         <button class="action-btn" style="background: var(--warning); color: white;" onclick="formatCode()">
                                             <i class="fas fa-magic"></i> Format
                                         </button>
+                                        <button class="action-btn" style="background: var(--success); color: white;" onclick="checkSyntax()">
+                                            <i class="fas fa-check"></i> Check Syntax
+                                        </button>
                                     </div>
                                 </div>
                                 <textarea id="codeEditor"></textarea>
@@ -1065,6 +1391,33 @@
                                 <button class="btn btn-info" onclick="loadTemplate()">
                                     <i class="fas fa-file-code"></i> Load Template
                                 </button>
+                                <button class="btn btn-warning" id="saveEditBtn" onclick="saveFileEdit()" style="display: none;">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Projects Tab -->
+                        <div id="projects-tab" class="tab-content">
+                            <div class="project-section">
+                                <h4>Your Projects</h4>
+                                <div id="projectsList">
+                                    <!-- Projects will be dynamically added -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Collaboration Tab -->
+                        <div id="collaboration-tab" class="tab-content">
+                            <div class="collaboration-section">
+                                <h4>Team Collaboration <span class="coming-soon">Coming Soon</span></h4>
+                                <p>Real-time collaboration features will be available soon!</p>
+                                <div class="collaborator-list">
+                                    <div class="collaborator">
+                                        <i class="fas fa-user"></i> You
+                                    </div>
+                                    <!-- Collaborators will be dynamically added -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1078,27 +1431,14 @@
                 <div class="content-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 class="card-title"><i class="fas fa-files"></i> Your Files</h3>
-                        <button class="btn btn-info" onclick="loadSubmissions()">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
-                    </div>
-
-                    <!-- Search & Filter -->
-                    <div class="search-filter">
-                        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search files and descriptions...">
-                        <select class="filter-select" id="fileTypeFilter">
-                            <option value="">All File Types</option>
-                            <option value="js">JavaScript</option>
-                            <option value="py">Python</option>
-                            <option value="java">Java</option>
-                            <option value="cpp">C++</option>
-                            <option value="html">HTML</option>
-                            <option value="css">CSS</option>
-                            <option value="txt">Text</option>
-                        </select>
-                        <button class="btn btn-warning" onclick="exportAllFiles()">
-                            <i class="fas fa-download"></i> Export All
-                        </button>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-info" onclick="loadSubmissions()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                            <button class="btn btn-warning" onclick="toggleBulkSelect()">
+                                <i class="fas fa-check-square"></i> Select Multiple
+                            </button>
+                        </div>
                     </div>
 
                     <div id="submissionsContainer" class="file-list">
@@ -1128,6 +1468,9 @@
                 <button class="btn btn-primary" onclick="copyToClipboard()">
                     <i class="fas fa-copy"></i> Copy Code
                 </button>
+                <button class="btn btn-warning" onclick="editCurrentFile()">
+                    <i class="fas fa-edit"></i> Edit File
+                </button>
             </div>
         </div>
     </div>
@@ -1141,8 +1484,36 @@
                 <label class="form-label">Folder Name</label>
                 <input type="text" class="form-input" id="newFolderName" placeholder="Enter folder name">
             </div>
+            <div class="form-group" id="adminFolderOptions" style="display: none;">
+                <label class="form-label">
+                    <i class="fas fa-globe"></i> Folder Privacy
+                </label>
+                <select class="form-select" id="folderPrivacy">
+                    <option value="private">Private</option>
+                    <option value="public">Public (All Users)</option>
+                </select>
+            </div>
             <button class="btn btn-primary" onclick="createFolder()" style="width: 100%;">
                 <i class="fas fa-plus"></i> Create Folder
+            </button>
+        </div>
+    </div>
+
+    <!-- Create Project Modal -->
+    <div id="createProjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateProjectModal()">&times;</span>
+            <h3><i class="fas fa-rocket"></i> Create New Project</h3>
+            <div class="form-group">
+                <label class="form-label">Project Name</label>
+                <input type="text" class="form-input" id="newProjectName" placeholder="Enter project name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Project Description</label>
+                <textarea class="form-textarea" id="newProjectDescription" placeholder="Describe your project..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="createProject()" style="width: 100%;">
+                <i class="fas fa-plus"></i> Create Project
             </button>
         </div>
     </div>
@@ -1155,6 +1526,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/javascript-lint.min.js"></script>
     
     <script src="script.js"></script>
 </body>
