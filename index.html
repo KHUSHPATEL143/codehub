@@ -1,1467 +1,527 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeHub - Professional Code Management</title>
+    <title>CodeHub Pro - Professional Code Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #06b6d4;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            
-            /* Dark mode variables */
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --card-bg: rgba(255, 255, 255, 0.95);
-        }
-
-        .dark-mode {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --card-bg: rgba(30, 41, 59, 0.95);
-            --border: #334155;
-            --light: #1e293b;
-            --dark: #f8fafc;
-            --gradient: linear-gradient(135deg, #1e3a8a 0%, #7e22ce 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--gradient);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-
-        .container {
-            max-width: 1800px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-            animation: slideDown 0.6s ease-out;
-            position: relative;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-        }
-
-        .user-info {
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--light);
-            padding: 8px 15px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .header h1 {
-            color: var(--text-primary);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: 30px;
-        }
-
-        .content-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--border);
-            animation: fadeInUp 0.6s ease-out;
-            color: var(--text-primary);
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Welcome Modal */
-        .welcome-modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-        }
-
-        .welcome-content {
-            background: var(--card-bg);
-            margin: 10% auto;
-            padding: 40px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            animation: modalSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-
-        .welcome-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        /* Enhanced Folder System */
-        .folder-system {
-            margin-bottom: 25px;
-        }
-
-        .folder-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .folder-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .folder-item {
-            background: var(--light);
-            padding: 12px 15px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .folder-item.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .folder-item:hover:not(.active) {
-            border-color: var(--primary);
-            transform: translateY(-1px);
-        }
-
-        .folder-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .folder-stats {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-left: 8px;
-        }
-
-        .folder-privacy {
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 8px;
-            background: var(--secondary);
-            color: white;
-        }
-
-        .folder-privacy.public {
-            background: var(--success);
-        }
-
-        /* Project Management */
-        .project-section {
-            margin-bottom: 25px;
-        }
-
-        .project-item {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .project-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .project-stats {
-            display: flex;
-            gap: 15px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        /* Enhanced Search & Filter */
-        .enhanced-search {
-            margin-bottom: 25px;
-        }
-
-        .search-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .tag-system {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 10px 0;
-        }
-
-        .tag {
-            background: var(--primary);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .tag-remove {
-            cursor: pointer;
-            padding: 2px;
-        }
-
-        /* File Item Enhancements */
-        .file-item {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: slideInRight 0.5s ease-out;
-            position: relative;
-        }
-
-        .file-item.starred {
-            border-left: 4px solid var(--warning);
-        }
-
-        .file-item:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .file-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .file-actions-top {
-            display: flex;
-            gap: 5px;
-        }
-
-        .star-btn {
-            background: transparent;
-            border: none;
-            color: var(--warning);
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .star-btn:hover {
-            transform: scale(1.2);
-        }
-
-        .file-type {
-            background: var(--primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .file-meta {
-            display: flex;
-            gap: 15px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .file-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .file-description {
-            color: var(--text-secondary);
-            margin: 10px 0;
-            line-height: 1.5;
-        }
-
-        .file-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* Collaboration Features */
-        .collaboration-section {
-            margin-bottom: 25px;
-        }
-
-        .collaborator-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .collaborator {
-            background: var(--light);
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Analytics Dashboard */
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .analytics-card {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .analytics-number {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .analytics-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        /* Activity Log */
-        .activity-log {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .activity-item {
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.8rem;
-        }
-
-        .activity-time {
-            color: var(--text-secondary);
-            font-size: 0.7rem;
-        }
-
-        /* Tab System */
-        .tab-container {
-            margin-bottom: 25px;
-        }
-
-        .tab-buttons {
-            display: flex;
-            background: var(--light);
-            border-radius: 15px;
-            padding: 5px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            background: transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-secondary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 120px;
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Upload Area */
-        .upload-area {
-            border: 3px dashed var(--border);
-            border-radius: 15px;
-            padding: 50px 30px;
-            text-align: center;
-            margin-bottom: 25px;
-            background: var(--light);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary);
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .upload-area:hover .upload-icon {
-            color: white;
-        }
-
-        .upload-area.dragover {
-            border-color: var(--primary);
-            background: var(--primary);
-            color: white;
-            transform: scale(1.02);
-        }
-
-        .upload-area.dragover .upload-icon {
-            color: white;
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-
-        /* Code Editor */
-        .editor-container {
-            border: 2px solid var(--border);
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        .editor-header {
-            background: var(--dark);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .editor-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-        }
-
-        .editor-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .CodeMirror {
-            height: 300px !important;
-            font-size: 14px;
-            font-family: 'Fira Code', 'Courier New', monospace;
-        }
-
-        /* Enhanced Form Elements */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: inherit;
-            background: var(--light);
-            color: var(--text-primary);
-        }
-
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Buttons with Enhanced Animations */
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(-1px) scale(1.02);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-success:hover {
-            background: #0da271;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-        }
-
-        .btn-info {
-            background: var(--info);
-            color: white;
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-        }
-
-        .btn-info:hover {
-            background: #0891b2;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-        }
-
-        .btn-warning:hover {
-            background: #d97706;
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        .btn:disabled:hover::before {
-            left: -100%;
-        }
-
-        /* Action Buttons */
-        .action-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px) scale(1.05);
-        }
-
-        /* Search & Filter */
-        .search-filter {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .search-box, .filter-select {
-            padding: 12px 15px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 14px;
-            flex: 1;
-            min-width: 200px;
-            transition: all 0.3s ease;
-            background: var(--light);
-            color: var(--text-primary);
-        }
-
-        .search-box:focus, .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            transform: translateY(-1px);
-        }
-
-        /* Statistics */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        /* Messages */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: none;
-            animation: slideInLeft 0.5s ease-out;
-        }
-
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .dark-mode .alert-success {
-            background: #064e3b;
-            color: #a7f3d0;
-            border-color: #065f46;
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        .dark-mode .alert-error {
-            background: #7f1d1d;
-            color: #fecaca;
-            border-color: #991b1b;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-        }
-
-        .close {
-            position: absolute;
-            right: 25px;
-            top: 20px;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-        }
-
-        .close:hover {
-            color: var(--text-primary);
-            transform: rotate(90deg) scale(1.1);
-        }
-
-        .code-preview {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 14px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-
-        /* File List */
-        .file-list {
-            margin-top: 25px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--text-secondary);
-            animation: fadeIn 1s ease-out;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        /* Bulk Actions */
-        .bulk-actions {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .file-checkbox {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-        }
-
-        /* Animations */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#1e1e2d',
+                        'sidebar-bg': '#27293d',
+                        'main-content-bg': '#2c2f45',
+                        'primary-blue': '#725af8',
+                        'text-faded': '#a0a0b5',
+                        'border-dark': '#44476a',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
             }
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid, .analytics-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .user-info {
-                position: static;
-                justify-content: center;
-                margin-top: 15px;
-            }
-            
-            .theme-toggle {
-                position: static;
-                margin: 15px auto;
-            }
-        }
-
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #ffffff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Coming Soon Badge */
-        .coming-soon {
-            background: var(--warning);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            margin-left: 5px;
-        }
-    </style>
+    </script>
 </head>
+
 <body>
     <!-- Welcome Modal -->
-    <div id="welcomeModal" class="welcome-modal">
-        <div class="welcome-content">
-            <div class="welcome-icon">
-                <i class="fas fa-code"></i>
+    <div id="welcomeModal" class="modal-overlay">
+        <div class="modal-container welcome-modal">
+            <div class="modal-header">
+                <h2>Welcome to CodeHub Pro! 👋</h2>
             </div>
-            <h2>Welcome to CodeHub! 👋</h2>
-            <p style="margin: 20px 0; color: var(--text-secondary);">Please tell us your name to get started:</p>
-            <input type="text" id="userNameInput" class="form-input" placeholder="Enter your name" style="margin-bottom: 20px;">
-            <button class="btn btn-primary" onclick="saveUserName()" style="width: 100%;">
-                <i class="fas fa-rocket"></i> Start Coding!
-            </button>
+            <div class="modal-body">
+                <div class="welcome-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <p>Please tell us your name to get started:</p>
+                <input type="text" id="userNameInput" class="form-input" placeholder="Enter your name">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveUserName()">
+                    <i class="fas fa-rocket"></i> Start Coding!
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">
-                <i class="fas fa-moon"></i>
-            </button>
-            <h1><i class="fas fa-code"></i> CodeHub Pro</h1>
-            <p>Professional Code Management with Real-time Collaboration</p>
-            <div class="user-info" id="userInfo">
-                <i class="fas fa-user"></i>
-                <span id="userName">Guest</span>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-code"></i>
+                <span>CodeHub Pro</span>
+            </div>
+
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-item active" onclick="switchPage('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchPage('upload')">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchPage('editor')">
+                    <i class="fas fa-edit"></i>
+                    <span>Editor</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchPage('folders')">
+                    <i class="fas fa-folder"></i>
+                    <span>Folders</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchPage('collaboration')">
+                    <i class="fas fa-users"></i>
+                    <span>Collaboration</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchPage('analytics')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="nav-action-btn" id="themeToggle" onclick="toggleDarkMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span id="userName">Guest</span>
+                </div>
             </div>
         </div>
+    </nav>
 
-        <div class="main-content">
-            <!-- Left Column - Statistics & Management -->
-            <div class="left-column">
-                <!-- Statistics -->
-                <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Statistics</h3>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalFiles">0</div>
-                            <div class="stat-label">Total Files</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="fileTypes">0</div>
-                            <div class="stat-label">File Types</div>
-                        </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Welcome to your code management workspace</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-code"></i>
                     </div>
-
-                    <div class="stat-card" style="margin-top: 15px;">
-                        <div class="stat-label">Last Upload</div>
-                        <div class="stat-number" id="lastUpload">-</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="totalFiles">0</div>
+                        <div class="stat-label">Total Files</div>
                     </div>
                 </div>
-
-                <!-- Analytics Dashboard -->
-                <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-analytics"></i> Analytics</h3>
-                    <div class="analytics-grid">
-                        <div class="analytics-card">
-                            <div class="analytics-number" id="totalLines">0</div>
-                            <div class="analytics-label">Lines of Code</div>
-                        </div>
-                        <div class="analytics-card">
-                            <div class="analytics-number" id="activeProjects">0</div>
-                            <div class="analytics-label">Active Projects</div>
-                        </div>
-                        <div class="analytics-card">
-                            <div class="analytics-number" id="collaborators">0</div>
-                            <div class="analytics-label">Collaborators</div>
-                        </div>
-                        <div class="analytics-card">
-                            <div class="analytics-number" id="storageUsed">0MB</div>
-                            <div class="analytics-label">Storage Used</div>
-                        </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="fileTypes">0</div>
+                        <div class="stat-label">File Types</div>
                     </div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="activeProjects">0</div>
+                        <div class="stat-label">Active Projects</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="collaborators">0</div>
+                        <div class="stat-label">Collaborators</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="storageUsed">0MB</div>
+                        <div class="stat-label">Storage Used</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="totalLines">0</div>
+                        <div class="stat-label">Lines of Code</div>
+                    </div>
+                </div>
+            </div>
 
-                <!-- Activity Log -->
+            <div class="content-grid">
                 <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-history"></i> Recent Activity</h3>
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <button class="btn btn-sm" onclick="loadActivityLog()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
                     <div class="activity-log" id="activityLog">
                         <!-- Activity items will be dynamically added -->
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
                 <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button class="btn btn-info" onclick="showUploadHelp()">
-                            <i class="fas fa-question-circle"></i> Upload Guide
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="switchPage('editor')">
+                            <i class="fas fa-plus"></i>
+                            <span>New File</span>
                         </button>
-                        <button class="btn btn-warning" onclick="showBulkActions()">
-                            <i class="fas fa-layer-group"></i> Bulk Operations
+                        <button class="quick-action-btn" onclick="showCreateProjectModal()">
+                            <i class="fas fa-rocket"></i>
+                            <span>New Project</span>
                         </button>
-                        <button class="btn btn-primary" onclick="switchTab('projects-tab')">
-                            <i class="fas fa-rocket"></i> Project Manager
+                        <button class="quick-action-btn" onclick="switchPage('upload')">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload Files</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="switchPage('collaboration')">
+                            <i class="fas fa-comments"></i>
+                            <span>Start Chat</span>
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Right Column - Files & Collaboration -->
-            <div class="right-column">
-                <!-- Enhanced Search & Filter -->
-                <div class="content-card enhanced-search">
-                    <h3 class="card-title"><i class="fas fa-search"></i> Enhanced Search</h3>
-                    <div class="search-filter">
-                        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search files, projects, tags...">
-                        <select class="filter-select" id="fileTypeFilter">
-                            <option value="">All File Types</option>
-                            <option value="js">JavaScript</option>
-                            <option value="py">Python</option>
-                            <option value="java">Java</option>
-                            <option value="cpp">C++</option>
-                            <option value="html">HTML</option>
-                            <option value="css">CSS</option>
-                            <option value="txt">Text</option>
+        <!-- Upload Page -->
+        <div id="upload-page" class="page">
+            <div class="page-header">
+                <h1>Upload Files</h1>
+                <p>Upload your code files to any folder</p>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h3>Upload Files</h3>
+                </div>
+
+                <div class="upload-section">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-folder"></i> Select Folder/Project
+                        </label>
+                        <select class="form-select" id="uploadFolder">
+                            <option value="general">General</option>
                         </select>
                     </div>
-                    <div class="search-actions">
-                        <button class="btn btn-primary" onclick="filterStarred()">
-                            <i class="fas fa-star"></i> Starred
+
+                    <div class="upload-area" id="uploadArea">
+                        <div id="uploadContent">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h3>Drag & Drop Your Files Here</h3>
+                            <p>or click to browse your computer</p>
+                            <p class="upload-hint">Supports all code files: .js, .py, .java, .cpp, .html, .css, etc.</p>
+                        </div>
+                        <input type="file" id="fileInput" multiple style="display: none;">
+                    </div>
+
+                    <!-- Selected Files Preview -->
+                    <div id="selectedFilesPreview" class="selected-files-preview" style="display: none;">
+                        <div class="preview-header">
+                            <h4>Selected Files</h4>
+                            <button class="btn btn-sm btn-danger" onclick="clearSelectedFiles()">
+                                <i class="fas fa-times"></i> Clear All
+                            </button>
+                        </div>
+                        <div id="selectedFilesList" class="selected-files-list">
+                            <!-- Selected files will appear here -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-comment-dots"></i> File Description
+                        </label>
+                        <textarea class="form-textarea" id="fileDescription"
+                            placeholder="Describe what this file does..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tags"></i> Tags (comma separated)
+                        </label>
+                        <input type="text" class="form-input" id="fileTags" placeholder="javascript, frontend, utility">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-clock"></i> Auto-delete after
+                        </label>
+                        <select class="form-select" id="fileExpiration">
+                            <option value="never">Never</option>
+                            <option value="1day">1 Day</option>
+                            <option value="1week">1 Week</option>
+                            <option value="1month">1 Month</option>
+                            <option value="3months">3 Months</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i> Browse Files
                         </button>
-                        <button class="btn btn-info" onclick="filterRecent()">
-                            <i class="fas fa-clock"></i> Recent
-                        </button>
-                        <button class="btn btn-warning" onclick="exportAllFiles()">
-                            <i class="fas fa-download"></i> Export All
+                        <button class="btn btn-primary" id="submitBtn" onclick="submitFiles()" disabled>
+                            <i class="fas fa-paper-plane"></i> Upload Files
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Bulk Actions Panel -->
-                <div class="bulk-actions" id="bulkActions">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="selectedCount">0 files selected</span>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="btn btn-danger" onclick="deleteSelectedFiles()">
-                                <i class="fas fa-trash"></i> Delete Selected
-                            </button>
-                            <button class="btn btn-primary" onclick="clearSelection()">
-                                <i class="fas fa-times"></i> Clear
-                            </button>
+        <!-- Folders Page -->
+        <div id="folders-page" class="page">
+            <div class="page-header">
+                <h1>Folders</h1>
+                <p>Browse and manage your folders and files</p>
+            </div>
+
+            <div class="folders-grid">
+                <div class="left-column">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Your Folders</h3>
+                            <div class="header-actions">
+                                <button class="btn btn-primary btn-sm" onclick="showCreateFolderModal()">
+                                    <i class="fas fa-folder-plus"></i> New Folder
+                                </button>
+                            </div>
+                        </div>
+                        <div class="folder-list" id="folderList">
+                            <!-- Folders will be dynamically added here -->
                         </div>
                     </div>
                 </div>
-
-                <!-- Folder System -->
-                <div class="content-card folder-system">
-                    <div class="folder-header">
-                        <h3 class="card-title"><i class="fas fa-folder"></i> Folders & Projects</h3>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="btn btn-primary" onclick="showCreateFolderModal()">
-                                <i class="fas fa-plus"></i> New Folder
-                            </button>
-                            <button class="btn btn-success" onclick="showCreateProjectModal()">
-                                <i class="fas fa-rocket"></i> New Project
-                            </button>
-                        </div>
-                    </div>
-                    <div class="folder-list" id="folderList">
-                        <!-- Folders will be dynamically added here -->
-                    </div>
-                </div>
-
-                <!-- Upload Section with Enhanced Tabs -->
-                <div class="content-card">
-                    <h3 class="card-title"><i class="fas fa-cloud-upload-alt"></i> File Management</h3>
-                    
-                    <div class="tab-container">
-                        <div class="tab-buttons">
-                            <button class="tab-btn active" onclick="switchTab('file-upload')">
-                                <i class="fas fa-file-upload"></i> Upload
-                            </button>
-                            <button class="tab-btn" onclick="switchTab('code-editor')">
-                                <i class="fas fa-edit"></i> Code Editor
-                            </button>
-                            <button class="tab-btn" onclick="switchTab('projects-tab')">
-                                <i class="fas fa-rocket"></i> Projects
-                            </button>
-                            <button class="tab-btn" onclick="switchTab('collaboration-tab')">
-                                <i class="fas fa-users"></i> Collaboration
-                            </button>
-                        </div>
-
-                        <!-- File Upload Tab -->
-                        <div id="file-upload" class="tab-content active">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-folder"></i> Select Folder/Project
-                                </label>
-                                <select class="form-select" id="uploadFolder">
-                                    <option value="general">General</option>
-                                    <!-- Folders will be dynamically added -->
-                                </select>
-                            </div>
-
-                            <div class="upload-area" id="uploadArea">
-                                <div id="uploadContent">
-                                    <div class="upload-icon">
-                                        <i class="fas fa-file-upload"></i>
-                                    </div>
-                                    <h3>Drag & Drop Your Files Here</h3>
-                                    <p>or click to browse your computer</p>
-                                    <p class="small">Supports all code files: .js, .py, .java, .cpp, .html, .css, etc.</p>
+                <div class="right-column">
+                    <!-- File List Section -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Files</h3>
+                            <div class="header-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="searchInput" placeholder="Search files...">
                                 </div>
-                                <input type="file" id="fileInput" multiple style="display: none;">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-comment-dots"></i> File Description
-                                </label>
-                                <textarea class="form-textarea" id="fileDescription" placeholder="Describe what this file does..."></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-tags"></i> Tags (comma separated)
-                                </label>
-                                <input type="text" class="form-input" id="fileTags" placeholder="javascript, frontend, utility">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-clock"></i> Auto-delete after
-                                </label>
-                                <select class="form-select" id="fileExpiration">
-                                    <option value="never">Never</option>
-                                    <option value="1day">1 Day</option>
-                                    <option value="1week">1 Week</option>
-                                    <option value="1month">1 Month</option>
-                                    <option value="3months">3 Months</option>
-                                </select>
-                            </div>
-
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
-                                    <i class="fas fa-folder-open"></i> Browse Files
+                                <button class="btn btn-secondary" onclick="loadSubmissions()">
+                                    <i class="fas fa-sync-alt"></i>
                                 </button>
-                                <button class="btn btn-success" id="submitBtn" onclick="submitFiles()" disabled>
-                                    <i class="fas fa-paper-plane"></i> Upload to Cloud
+                                <button class="btn btn-warning" onclick="toggleBulkSelect()">
+                                    <i class="fas fa-check-square"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Code Editor Tab -->
-                        <div id="code-editor" class="tab-content">
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-folder"></i> Select Folder/Project
-                                </label>
-                                <select class="form-select" id="editorFolder">
-                                    <option value="general">General</option>
-                                    <!-- Folders will be dynamically added -->
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-file-signature"></i> File Name
-                                </label>
-                                <input type="text" class="form-input" id="editorFileName" placeholder="example.js, script.py, etc.">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-comment-dots"></i> Description
-                                </label>
-                                <textarea class="form-textarea" id="editorDescription" placeholder="Describe your code..."></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-tags"></i> Tags (comma separated)
-                                </label>
-                                <input type="text" class="form-input" id="editorTags" placeholder="javascript, frontend, utility">
-                            </div>
-
-                            <div class="editor-container">
-                                <div class="editor-header">
-                                    <div class="editor-title">
-                                        <i class="fas fa-code"></i>
-                                        <span id="editorTitle">Code Editor</span>
-                                    </div>
-                                    <div class="editor-actions">
-                                        <button class="action-btn" style="background: var(--info); color: white;" onclick="clearEditor()">
-                                            <i class="fas fa-broom"></i> Clear
-                                        </button>
-                                        <button class="action-btn" style="background: var(--warning); color: white;" onclick="formatCode()">
-                                            <i class="fas fa-magic"></i> Format
-                                        </button>
-                                        <button class="action-btn" style="background: var(--success); color: white;" onclick="checkSyntax()">
-                                            <i class="fas fa-check"></i> Check Syntax
-                                        </button>
-                                    </div>
-                                </div>
-                                <textarea id="codeEditor"></textarea>
-                            </div>
-
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                <button class="btn btn-primary" onclick="createFileFromEditor()">
-                                    <i class="fas fa-plus-circle"></i> Create File
-                                </button>
-                                <button class="btn btn-info" onclick="loadTemplate()">
-                                    <i class="fas fa-file-code"></i> Load Template
-                                </button>
-                                <button class="btn btn-warning" id="saveEditBtn" onclick="saveFileEdit()" style="display: none;">
-                                    <i class="fas fa-save"></i> Save Changes
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Projects Tab -->
-                        <div id="projects-tab" class="tab-content">
-                            <div class="project-section">
-                                <h4>Your Projects</h4>
-                                <div id="projectsList">
-                                    <!-- Projects will be dynamically added -->
+                        <!-- Bulk Actions -->
+                        <div class="bulk-actions" id="bulkActions" style="display: none;">
+                            <div class="bulk-actions-content">
+                                <span id="selectedCount">0 files selected</span>
+                                <div class="bulk-buttons">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteSelectedFiles()">
+                                        <i class="fas fa-trash"></i> Delete Selected
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="clearSelection()">
+                                        <i class="fas fa-times"></i> Clear
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Collaboration Tab -->
-                        <div id="collaboration-tab" class="tab-content">
-                            <div class="collaboration-section">
-                                <h4>Team Collaboration <span class="coming-soon">Coming Soon</span></h4>
-                                <p>Real-time collaboration features will be available soon!</p>
-                                <div class="collaborator-list">
-                                    <div class="collaborator">
-                                        <i class="fas fa-user"></i> You
-                                    </div>
-                                    <!-- Collaborators will be dynamically added -->
-                                </div>
+                        <div id="submissionsContainer" class="file-list">
+                            <div class="empty-state">
+                                <i class="fas fa-folder-open"></i>
+                                <h3>No Files Yet</h3>
+                                <p>Upload your first code file or create one using the editor!</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Messages -->
-                <div id="successMessage" class="alert alert-success"></div>
-                <div id="errorMessage" class="alert alert-error"></div>
-
-                <!-- File List -->
-                <div class="content-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 class="card-title"><i class="fas fa-files"></i> Your Files</h3>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="btn btn-info" onclick="loadSubmissions()">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                            <button class="btn btn-warning" onclick="toggleBulkSelect()">
-                                <i class="fas fa-check-square"></i> Select Multiple
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="submissionsContainer" class="file-list">
-                        <div class="empty-state">
-                            <i class="fas fa-folder-open"></i>
-                            <h3>No Files Yet</h3>
-                            <p>Upload your first code file or create one using the editor!</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Editor Page -->
+        <div id="editor-page" class="page">
+            <div class="page-header">
+                <h1>Code Editor</h1>
+                <p>Write and edit your code with powerful features</p>
+            </div>
+
+            <div class="content-card">
+                <div class="editor-controls">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-folder"></i> Save to Folder/Project
+                        </label>
+                        <select class="form-select" id="editorFolder">
+                            <option value="general">General</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-file-signature"></i> File Name
+                        </label>
+                        <input type="text" class="form-input" id="editorFileName"
+                            placeholder="example.js, script.py, etc.">
+                    </div>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-header">
+                        <div class="editor-title">
+                            <i class="fas fa-code"></i>
+                            <span id="editorTitle">Code Editor</span>
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="clearEditor()">
+                                <i class="fas fa-broom"></i> Clear
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="formatCode()">
+                                <i class="fas fa-magic"></i> Format
+                            </button>
+                            <button class="btn btn-sm btn-info" onclick="checkSyntax()">
+                                <i class="fas fa-check"></i> Check Syntax
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="loadTemplate()">
+                                <i class="fas fa-file-code"></i> Template
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="codeEditor"></textarea>
+                </div>
+
+                <div class="editor-meta">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-comment-dots"></i> Description
+                        </label>
+                        <textarea class="form-textarea" id="editorDescription"
+                            placeholder="Describe your code..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tags"></i> Tags (comma separated)
+                        </label>
+                        <input type="text" class="form-input" id="editorTags"
+                            placeholder="javascript, frontend, utility">
+                    </div>
+                </div>
+
+                <div class="editor-actions-bottom">
+                    <button class="btn btn-primary" onclick="createFileFromEditor()">
+                        <i class="fas fa-plus-circle"></i> Create File
+                    </button>
+                    <button class="btn btn-secondary" id="saveEditBtn" onclick="saveFileEdit()" style="display: none;">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="btn btn-outline" onclick="clearEditor()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Collaboration Page -->
+        <div id="collaboration-page" class="page">
+            <main class="p-6 flex-grow">
+                <p class="text-text-faded mb-4">Communicate with your team and manage shared projects.</p>
+
+                <div class="flex collaboration-area gap-6 left-panel shadow-2xl">
+
+                    <!-- Left Panel: Chat and Project Selection (350px width) -->
+                    <div class="w-96 flex flex-col custom-scrollbar overflow-y-auto bg-sidebar-bg rounded-xl">
+
+                        <!-- Div 1: Chat Selection -->
+                        <div id="conversations-panel" class="p-4 border-b border-border-dark">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-semibold">Conversations</h2>
+                            </div>
+
+                            <!-- Search Box -->
+                            <div class="relative mb-4">
+                                <input type="text" placeholder="Search chats..."
+                                    class="w-full pl-10 pr-4 py-2 bg-main-content-bg rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-blue transition">
+                                <i
+                                    class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-faded text-sm"></i>
+                            </div>
+
+                            <!-- Chat List -->
+                            <div id="chat-list">
+                                <!-- Chat items will be rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Div 2: Project Selection -->
+                        <div id="projects-panel" class="p-4 flex-grow">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-semibold">Projects</h2>
+                                <button id="new-project-btn"
+                                    class="bg-primary-blue w-8 h-8 rounded-full text-white text-lg hover:bg-opacity-90 transition"
+                                    onclick="showContent('create-project', null)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+
+                            <!-- Project List -->
+                            <div id="project-list">
+                                <!-- Project items will be rendered here -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Div 3: Dynamic Content Area (Right Side) -->
+                    <div id="content-area"
+                        class="flex-grow bg-main-content-bg p-8 flex flex-col custom-scrollbar overflow-y-auto rounded-xl">
+                        <!-- Content will be injected here by JavaScript -->
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </main>
+
+    <!-- Modals -->
     <!-- File Preview Modal -->
-    <div id="previewModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="modalTitle"><i class="fas fa-file-code"></i> File Preview</h3>
-            <div class="file-meta" id="modalMeta"></div>
-            <div class="file-description" id="modalDescription"></div>
-            <pre class="code-preview" id="modalContent"></pre>
-            <div class="file-actions" style="margin-top: 20px;">
+    <div id="previewModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-file-code"></i> File Preview</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="file-meta" id="modalMeta"></div>
+                <div class="file-description" id="modalDescription"></div>
+                <pre class="code-preview" id="modalContent"></pre>
+            </div>
+            <div class="modal-footer">
                 <button class="btn btn-success" onclick="downloadCurrentFile()">
                     <i class="fas fa-download"></i> Download File
                 </button>
@@ -1471,54 +531,80 @@
                 <button class="btn btn-warning" onclick="editCurrentFile()">
                     <i class="fas fa-edit"></i> Edit File
                 </button>
+                <button class="btn btn-secondary" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Close
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Create Folder Modal -->
-    <div id="createFolderModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeCreateFolderModal()">&times;</span>
-            <h3><i class="fas fa-folder-plus"></i> Create New Folder</h3>
-            <div class="form-group">
-                <label class="form-label">Folder Name</label>
-                <input type="text" class="form-input" id="newFolderName" placeholder="Enter folder name">
+    <div id="createFolderModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-plus"></i> Create New Folder</h3>
+                <button class="modal-close" onclick="closeCreateFolderModal()">&times;</button>
             </div>
-            <div class="form-group" id="adminFolderOptions" style="display: none;">
-                <label class="form-label">
-                    <i class="fas fa-globe"></i> Folder Privacy
-                </label>
-                <select class="form-select" id="folderPrivacy">
-                    <option value="private">Private</option>
-                    <option value="public">Public (All Users)</option>
-                </select>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Folder Name</label>
+                    <input type="text" class="form-input" id="newFolderName" placeholder="Enter folder name">
+                </div>
+                <div class="form-group" id="adminFolderOptions" style="display: none;">
+                    <label class="form-label">
+                        <i class="fas fa-globe"></i> Folder Privacy
+                    </label>
+                    <select class="form-select" id="folderPrivacy">
+                        <option value="private">Private</option>
+                        <option value="public">Public (All Users)</option>
+                    </select>
+                </div>
             </div>
-            <button class="btn btn-primary" onclick="createFolder()" style="width: 100%;">
-                <i class="fas fa-plus"></i> Create Folder
-            </button>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreateFolderModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-primary" onclick="createFolder()">
+                    <i class="fas fa-plus"></i> Create Folder
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Create Project Modal -->
-    <div id="createProjectModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeCreateProjectModal()">&times;</span>
-            <h3><i class="fas fa-rocket"></i> Create New Project</h3>
-            <div class="form-group">
-                <label class="form-label">Project Name</label>
-                <input type="text" class="form-input" id="newProjectName" placeholder="Enter project name">
+    <div id="createProjectModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-rocket"></i> Create New Project</h3>
+                <button class="modal-close" onclick="closeCreateProjectModal()">&times;</button>
             </div>
-            <div class="form-group">
-                <label class="form-label">Project Description</label>
-                <textarea class="form-textarea" id="newProjectDescription" placeholder="Describe your project..."></textarea>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" class="form-input" id="newProjectName" placeholder="Enter project name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Project Description</label>
+                    <textarea class="form-textarea" id="newProjectDescription"
+                        placeholder="Describe your project..."></textarea>
+                </div>
             </div>
-            <button class="btn btn-primary" onclick="createProject()" style="width: 100%;">
-                <i class="fas fa-plus"></i> Create Project
-            </button>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreateProjectModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-primary" onclick="createProject()">
+                    <i class="fas fa-plus"></i> Create Project
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- CodeMirror Scripts -->
+    <!-- Messages -->
+    <div id="successMessage" class="alert alert-success"></div>
+    <div id="errorMessage" class="alert alert-error"></div>
+
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
@@ -1526,9 +612,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/lint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/javascript-lint.min.js"></script>
-    
+
     <script src="script.js"></script>
 </body>
+
 </html>
